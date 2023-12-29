@@ -44,3 +44,31 @@ class SessionsTest extends AbstractSparkSuite:
       ds.write.option("header", true).csv(f)
       val rds = spark.read.option("header", true).csv(f).as[Person]
       rds.collect() should be(rds.collect())
+
+  test("Can write json"):
+    Using.resource(Sessions.newSparkSession()): spark =>
+      import scala3encoders.given
+      import spark.implicits.*
+      val ds  = spark.sparkContext.parallelize(people, 16).toDS()
+      val f   = randomTmpFilename
+      ds.write.json(f)
+      val rds = spark.read.json(f).as[Person]
+      rds.collect() should be(rds.collect())
+
+  test("Can write orc"):
+    Using.resource(Sessions.newSparkSession()): spark =>
+      import scala3encoders.given
+      import spark.implicits.*
+      val ds  = spark.sparkContext.parallelize(people, 16).toDS()
+      val f   = randomTmpFilename
+      ds.write.orc(f)
+      val rds = spark.read.orc(f).as[Person]
+      rds.collect() should be(rds.collect())
+
+  test("Can mount as tmp table"):
+    Using.resource(Sessions.newSparkSession()): spark =>
+      import scala3encoders.given
+      import spark.implicits.*
+      val ds = spark.sparkContext.parallelize(people, 16).toDS()
+      ds.createOrReplaceTempView("people")
+      spark.sql("select * from people").count() should be(10)

@@ -4,4 +4,4 @@ Based on work by Chris Birchall ,  https://xebia.com/blog/using-scala-3-with-spa
 
 Notes:
 
-- To run on newer jdks like jdk21, please pass `--add-opens=java.base/sun.nio.ch=ALL-UNNAMED` to java.
+- To run spark code on newer jdks like jdk21, please pass `--add-opens=java.base/sun.nio.ch=ALL-UNNAMED` to java.
