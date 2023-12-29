@@ -10,20 +10,23 @@ class SparkSessionExtTest extends AbstractSparkSuite:
   test("schemaOf"):
     Using.resource(Sessions.newSparkSession()): spark =>
       val sp     = new SparkSessionExt(spark)
+      import scala3encoders.given
+      import spark.implicits.*
       val schema = sp.schemaOf[Person]
-      println(schema)
       schema.toList.size should be(2)
 
   test("toDF"):
     Using.resource(Sessions.newSparkSession()): spark =>
       val sp = new SparkSessionExt(spark)
-      val df = sp.toDF(people)
       import scala3encoders.given
+      import spark.implicits.*
+      val df = sp.toDF(people)
       df.as[Person].collect() should be(people.toArray)
 
   test("toDS"):
     Using.resource(Sessions.newSparkSession()): spark =>
       val sp = new SparkSessionExt(spark)
-      val ds = sp.toDS(people)
+      import scala3encoders.given
       import spark.implicits.*
+      val ds = sp.toDS(people)
       ds.collect() should be(people.toArray)
