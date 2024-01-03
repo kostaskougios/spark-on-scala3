@@ -33,7 +33,7 @@ val SparkScala3Fix = Seq(
 // -----------------------------------------------------------------------------------------------
 val commonSettings = Seq(
   Test / fork := true,
-  Test / javaOptions += "--add-opens=java.base/java.lang=ALL-UNNAMED"
+  Test / javaOptions ++= Seq("--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
 )
 
 lazy val `spark-on-scala3` = project
