@@ -18,19 +18,15 @@ class Step(spark: SparkSession, rootFolder: String, name: String):
     FileUtils.deleteDirectory(new File(targetDir))
 
   private def cache[A](reader: => A, writer: => A): A =
-    if new File(targetDir).exists() then
-      println("cached")
-      reader
-    else
-      println("not-cached")
-      writer
+    if new File(targetDir).exists() then reader
+    else writer
 
   def calculateOnce(f: => DataFrame): DataFrame =
     cache(
       spark.read.parquet(targetDir), {
         val df = f
         df.write.parquet(targetDir)
-        f
+        df
       }
     )
 
