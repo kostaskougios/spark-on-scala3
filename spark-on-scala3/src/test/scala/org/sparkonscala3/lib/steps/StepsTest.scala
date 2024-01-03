@@ -10,12 +10,11 @@ class StepsTest extends AbstractSparkSuite:
     Using.resource(Sessions.newSparkSession()): spark =>
       import spark.implicits.*
 
-      val sp         = new SparkSessionExt(spark)
       val steps      = Steps(spark, "StepsTest-correct-df")
       val budgetStep = steps.step("budget")
       budgetStep.invalidateCache()
 
-      def calculations() = sp.toDF(Seq(1, 2, 3))
+      def calculations() = Seq(1, 2, 3).toDF()
 
       for _ <- 1 to 3 do budgetStep.calculateOnce(calculations()).as[Int].collect().sorted should be(Array(1, 2, 3))
 
@@ -23,12 +22,11 @@ class StepsTest extends AbstractSparkSuite:
     Using.resource(Sessions.newSparkSession()): spark =>
       import spark.implicits.*
 
-      val sp         = new SparkSessionExt(spark)
       val steps      = Steps(spark, "StepsTest-correct-ds")
       val budgetStep = steps.step("budget")
       budgetStep.invalidateCache()
 
-      def calculations() = sp.toDS(Seq(1, 2, 3))
+      def calculations() = Seq(1, 2, 3).toDS()
 
       for _ <- 1 to 3 do budgetStep.calculateOnce(calculations()).as[Int].collect().sorted should be(Array(1, 2, 3))
 
@@ -36,7 +34,6 @@ class StepsTest extends AbstractSparkSuite:
     Using.resource(Sessions.newSparkSession()): spark =>
       import spark.implicits.*
 
-      val sp         = new SparkSessionExt(spark)
       val steps      = Steps(spark, "StepsTest-cachedDF")
       val budgetStep = steps.step("budget")
       budgetStep.invalidateCache()
@@ -45,7 +42,7 @@ class StepsTest extends AbstractSparkSuite:
 
       def calculations() =
         calculated.incrementAndGet()
-        sp.toDF(Seq(1, 2, 3))
+        Seq(1, 2, 3).toDF()
 
       budgetStep.calculateOnce(calculations())
       budgetStep.calculateOnce(calculations())
@@ -55,7 +52,6 @@ class StepsTest extends AbstractSparkSuite:
     Using.resource(Sessions.newSparkSession()): spark =>
       import spark.implicits.*
 
-      val sp         = new SparkSessionExt(spark)
       val steps      = Steps(spark, "StepsTest-cachedDS")
       val budgetStep = steps.step("budget")
       budgetStep.invalidateCache()
@@ -64,7 +60,7 @@ class StepsTest extends AbstractSparkSuite:
 
       def calculations() =
         calculated.incrementAndGet()
-        sp.toDS(Seq(1, 2, 3))
+        Seq(1, 2, 3).toDS()
       budgetStep.calculateOnce(calculations())
       budgetStep.calculateOnce(calculations())
       calculated.get() should be(1)
